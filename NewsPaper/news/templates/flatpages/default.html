@@ -7,6 +7,11 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Bare - Start Bootstrap Template</title>
+        {% load cache %} <!-- Загружаем кэширование -->
+            {% cache 30 header %} <!-- Кэшируем отдельный блок на 30 секунд -->
+                {% block header %}
+                {% endblock header %}
+            {% endcache %}
 
         {% load static %}
         <!-- Core theme CSS (includes Bootstrap)-->
@@ -40,7 +45,10 @@
                 </div>
             </div>
         </nav>
-        <!-- Page content-->
+        <aside>
+        {% cache 600 sidebar %}
+            {% endcache %}
+        </aside><!-- Page content-->
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -52,3 +60,4 @@
         </div>
     </body>
 </html>
+

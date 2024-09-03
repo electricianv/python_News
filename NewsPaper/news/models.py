@@ -1,7 +1,7 @@
-from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.core.cache import cache
 
 
 class Author(models.Model):
@@ -93,12 +93,4 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.user.username} on {self.post.title}'
 
-# class Product(models.Model):
-#     name = models.CharField(max_length=255)
-#     price = models.FloatField(default=0.0)
-#
-#     def __str__(self):
-#         return self.name
 
-
-# Create your models here.

@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django_filters import FilterSet, CharFilter, ModelChoiceFilter
 from django import forms
+from django.views.generic.edit import UpdateView
+from django.core.cache import cache
 
 
 def no_permission(request, exception):
@@ -41,7 +43,15 @@ class NewsUpdateView(LoginRequiredMixin, OwnerRequiredMixin, UpdateView):
     model = Post
     form_class = NewsForm
     template_name = 'news/news_update_form.html'
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get(self.pk_url_kwarg)
+        obj = cache.get(f'post-{pk}')  # Try to get from cache
 
+        if not obj:
+            obj = super().get_object(queryset)
+            cache.set(f'post-{pk}', obj)  # Cache the object if not found
+
+        return obj
 
 class NewsDeleteView(LoginRequiredMixin, OwnerRequiredMixin, DeleteView):
     model = Post
@@ -88,15 +98,6 @@ class PostUpdateView(LoginRequiredMixin, OwnerRequiredMixin, UpdateView):
     permission_required = ('news.change_post',)
     template_name = 'news/news_form.html'
     form_class = PostForm
-
-
-# @login_required
-# def upgrade_me(request):
-#     user = request.user
-#     premium_group = Group.objects.get(name='authors')
-#     if not request.user.groups.filter(name='author').exists():
-#         premium_group.user_set.add(user)
-#     return redirect('/news')
 
 
 class CategoryListView(Posts):
